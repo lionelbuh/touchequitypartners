@@ -1,0 +1,250 @@
+Touch Equity Partners – Website Brief
+
+We need a simple professional website for Touch Equity Partners.
+
+The site should be very clean, modern, and minimal, similar to a simple investor or venture firm landing page.
+
+Important structure:
+
+The main website must be one single scrolling page
+
+The Customer Login page is separate
+
+After login, users access a Customer Dashboard
+
+There must also be an Admin Page to post updates that appear on the dashboard.
+
+I will provide the logo, so leave a placeholder for it in the header.
+
+The website must be mobile friendly, fast, and simple to maintain.
+
+Suggested stack:
+
+Next.js or simple React
+
+Supabase for authentication and database
+
+1. Pages Structure
+
+The website will have four pages total.
+
+Main Page (Single Scrolling Page)
+
+Customer Login Page
+
+Customer Dashboard (after login)
+
+Admin Page (restricted access)
+
+2. Main Page (Single Page Website)
+
+The main page should contain multiple sections but stay on one page.
+The navigation menu should scroll to sections.
+
+Header
+
+Top navigation bar with:
+
+Logo placeholder
+Menu links:
+
+Home
+
+Mission
+
+What We Do
+
+Portfolio
+
+Customer Login
+
+The Customer Login button should link to the login page.
+
+Section 1 – Hero
+
+Title:
+
+Touch Equity Partners
+
+Subtitle:
+
+Building Long-Term Partnerships with Business Owners
+
+Text:
+
+Touch Equity Partners is a collective of private investors and entrepreneurs supporting startups and growing businesses.
+
+We focus on long-term partnerships and help founders strengthen their strategy, prepare for fundraising, and connect with the right investors.
+
+Location:
+
+San Diego, California
+
+Section 2 – What We Do
+
+Three blocks or columns.
+
+Startup & Growth Investments
+
+We support promising startups and growing businesses with funding, guidance, and access to our investor network.
+
+Advisory & Strategic Support
+
+Our platform TouchConnectPro helps founders prepare for fundraising, connect with private investors, and make smarter financial decisions.
+
+Entrepreneurs Supporting Entrepreneurs
+
+We are founders ourselves and understand the challenges of building companies. Our goal is to help founders build strong foundations before major funding rounds.
+
+Section 3 – Mission
+
+Title:
+
+Our Mission
+
+Text:
+
+Touch Equity Partners focuses on building long-term partnerships with founders and business owners.
+
+Having built and grown our own companies, we understand the challenges entrepreneurs face when trying to raise capital and scale.
+
+We step in before major funding rounds to help founders strengthen their strategy, improve their financial structure, and connect with the right investors.
+
+In business, as in poker, it is smart to stay in the game. But going all-in with the wrong partners can be costly. We help founders find investors who share their vision and are committed for the long term.
+
+Section 4 – Portfolio
+
+Title:
+
+Portfolio Startups
+
+List or cards:
+
+TouchConnectPro
+The Accounting Touch
+The Expenses Touch
+Hotel Service RAS
+
+Section 5 – Footer
+
+Touch Equity Partners
+Founder & Investor since 2015
+San Diego, California
+
+3. Customer Login Page
+
+Create a simple login page connected to Supabase authentication.
+
+Title:
+
+Customer Login
+
+Fields:
+
+Email
+Password
+Login Button
+
+Optional links:
+
+Create Account
+Forgot Password
+
+After successful login, redirect the user to:
+
+/dashboard
+
+4. Customer Dashboard
+
+This page is accessible only after login.
+
+The dashboard should show:
+
+Title:
+
+Dashboard
+
+Welcome message:
+
+Welcome back.
+
+Below that, display posts or messages created by the admin.
+
+Example layout:
+
+Updates
+
+Post Title
+Post Message
+
+Post Title
+Post Message
+
+The posts should be pulled from the database and show only published posts.
+
+5. Admin Page
+
+Create a simple admin page to manage messages displayed on the dashboard.
+
+This page should only be accessible to admin users.
+
+Use Supabase authentication to control access.
+
+Example rule:
+
+users.role = admin
+
+If the user is not admin → deny access.
+
+Admin Features
+
+Admin should be able to:
+
+Create new dashboard posts
+Edit posts
+Delete posts
+Publish or unpublish posts
+
+Admin Form Fields
+
+Title
+Message / Content
+Optional link
+Publish button
+
+Example message:
+
+Title: Welcome to the platform
+Message: Here are the first steps to prepare for fundraising.
+
+When published, the message should appear on the customer dashboard.
+
+6. Database Structure (Supabase)
+
+Create a table called:
+
+dashboard_posts
+
+Fields:
+
+id
+title
+content
+link (optional)
+created_at
+created_by
+published (true/false)
+
+7. Technical Requirements
+
+Simple modern design
+Mobile responsive
+Fast loading
+SEO friendly
+Easy to update later
+
+Tech suggestion:
+
+Next.js
+Supabase authentication
+Supabase database

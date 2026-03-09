@@ -1,1 +1,0 @@
-# Touch Equity Partners

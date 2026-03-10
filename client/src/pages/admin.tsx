@@ -19,7 +19,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { insertPostSchema } from "@shared/schema";
 import type { DashboardPost, Attachment } from "@shared/schema";
 import logoPath from "@assets/Logo_of_Touch_Equity_Partners_1773071901628.png";
-import { LogOut, Plus, Pencil, Trash2, Loader2, X, Users, Upload, FileText, Image, Paperclip } from "lucide-react";
+import { LogOut, Plus, Pencil, Trash2, Loader2, X, Users, Upload, FileText, Image, Paperclip, KeyRound } from "lucide-react";
 
 type PostWithAssignments = DashboardPost & { assignedCustomerIds: string[] };
 type Customer = { id: string; username: string };
@@ -57,6 +57,8 @@ export default function AdminPage() {
   const [currentAttachments, setCurrentAttachments] = useState<Attachment[]>([]);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [resetPasswordFor, setResetPasswordFor] = useState<Customer | null>(null);
+  const [newPassword, setNewPassword] = useState("");
 
   const { data: posts, isLoading: postsLoading } = useQuery<PostWithAssignments[]>({
     queryKey: ["/api/admin/posts"],
@@ -177,6 +179,21 @@ export default function AdminPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/posts"] });
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+    },
+  });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: async ({ userId, password }: { userId: string; password: string }) => {
+      const res = await apiRequest("POST", `/api/admin/reset-password/${userId}`, { password });
+      return res.json();
+    },
+    onSuccess: (data) => {
+      toast({ title: "Password Reset", description: data.message });
+      setResetPasswordFor(null);
+      setNewPassword("");
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message.replace(/^\d+:\s*/, ""), variant: "destructive" });
     },
   });
 
@@ -591,6 +608,77 @@ export default function AdminPage() {
               )}
             </CardContent>
           </Card>
+        )}
+
+        <div className="mt-12">
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-4" data-testid="text-customers-title">
+            Customer Accounts
+          </h2>
+          {customers && customers.length > 0 ? (
+            <div className="space-y-3">
+              {customers.map((customer) => (
+                <Card key={customer.id} className="border-none" data-testid={`card-customer-${customer.id}`}>
+                  <CardContent className="py-4 px-5 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Users className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                      <span className="text-sm font-medium truncate" data-testid={`text-customer-email-${customer.id}`}>
+                        {customer.username}
+                      </span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => { setResetPasswordFor(customer); setNewPassword(""); }}
+                      data-testid={`button-reset-pw-${customer.id}`}
+                    >
+                      <KeyRound className="w-3.5 h-3.5 mr-1.5" />
+                      Reset Password
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">No customers registered yet.</p>
+          )}
+        </div>
+
+        {resetPasswordFor && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" data-testid="modal-reset-password">
+            <Card className="w-full max-w-md border-none">
+              <CardHeader className="flex flex-row items-center justify-between gap-4 pb-4">
+                <CardTitle className="text-lg">Reset Password</CardTitle>
+                <Button variant="ghost" size="icon" onClick={() => { setResetPasswordFor(null); setNewPassword(""); }} data-testid="button-close-reset-modal">
+                  <X className="w-4 h-4" />
+                </Button>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Set a new password for <span className="font-medium text-foreground">{resetPasswordFor.username}</span>
+                </p>
+                <Input
+                  type="password"
+                  placeholder="New password (min 6 characters)"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  data-testid="input-reset-password"
+                />
+                <div className="flex items-center gap-3">
+                  <Button
+                    onClick={() => resetPasswordMutation.mutate({ userId: resetPasswordFor.id, password: newPassword })}
+                    disabled={newPassword.length < 6 || resetPasswordMutation.isPending}
+                    data-testid="button-confirm-reset"
+                  >
+                    {resetPasswordMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                    Reset Password
+                  </Button>
+                  <Button variant="outline" onClick={() => { setResetPasswordFor(null); setNewPassword(""); }} data-testid="button-cancel-reset">
+                    Cancel
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
       </main>
     </div>

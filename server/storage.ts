@@ -6,6 +6,7 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser & { role?: string }): Promise<User>;
+  updateUserPassword(userId: string, hashedPassword: string): Promise<void>;
   getCustomers(): Promise<User[]>;
   getPublishedPostsForUser(userId: string): Promise<DashboardPost[]>;
   getAllPosts(): Promise<(DashboardPost & { assignedCustomerIds: string[] })[]>;
@@ -31,6 +32,10 @@ export class DatabaseStorage implements IStorage {
   async createUser(insertUser: InsertUser & { role?: string }): Promise<User> {
     const [user] = await db.insert(users).values(insertUser).returning();
     return user;
+  }
+
+  async updateUserPassword(userId: string, hashedPassword: string): Promise<void> {
+    await db.update(users).set({ password: hashedPassword }).where(eq(users.id, userId));
   }
 
   async getCustomers(): Promise<User[]> {
@@ -112,6 +117,7 @@ export class DatabaseStorage implements IStorage {
     }
     return false;
   }
+
 }
 
 export const storage = new DatabaseStorage();

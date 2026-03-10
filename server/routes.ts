@@ -218,6 +218,25 @@ export async function registerRoutes(
     }
   });
 
+  app.post("/api/admin/reset-password/:userId", requireAdmin, async (req, res, next) => {
+    try {
+      const userIdParam = req.params.userId;
+      const userId = Array.isArray(userIdParam) ? userIdParam[0] : userIdParam;
+      const { password } = req.body;
+      if (!password || typeof password !== "string" || password.length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters" });
+      }
+      const user = await storage.getUser(userId);
+      if (!user) return res.status(404).json({ message: "User not found" });
+      if (user.role !== "customer") return res.status(403).json({ message: "Can only reset customer passwords" });
+      const hashedPassword = await hashPassword(password);
+      await storage.updateUserPassword(userId, hashedPassword);
+      res.json({ message: `Password reset for ${user.username}` });
+    } catch (err) {
+      next(err);
+    }
+  });
+
   app.delete("/api/admin/posts/:id", requireAdmin, async (req, res, next) => {
     try {
       const idParam = req.params.id;

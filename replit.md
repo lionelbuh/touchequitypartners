@@ -40,10 +40,14 @@ A professional website for Touch Equity Partners, a private investment firm base
 - `client/src/hooks/use-auth.ts` - Auth hook
 
 ## Default Accounts (Seed Data)
-- Admin: admin@touchequity.com / admin123
-- Customer 1: customer1@touchequity.com / customer1
-- Customer 2: customer2@touchequity.com / customer2
-- Customer 3: customer3@touchequity.com / customer3
+- Admin: hello@touchequitypartners.com / Admin!55
+- Customer: buhler.lionel@gmail.com / user1!55
+
+## Password Reset
+- Admin-only feature: admin can reset any customer's password from the admin panel
+- "Customer Accounts" section at bottom of admin page lists all customers with "Reset Password" button
+- Opens a modal to set new password (min 6 characters)
+- Endpoint: POST `/api/admin/reset-password/:userId` (admin-only, customer role enforced)
 
 ## Post Assignment System
 Posts are assigned to specific customers via the `post_assignments` junction table. When an admin creates or edits a post, they select which customers should see it. Each customer's dashboard only shows posts that are both published AND assigned to them.

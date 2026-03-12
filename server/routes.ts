@@ -54,6 +54,12 @@ function requireAdmin(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
+export function registerHealthCheck(app: Express) {
+  app.get("/health", (_req, res) => {
+    res.status(200).json({ status: "ok" });
+  });
+}
+
 export async function registerRoutes(
   httpServer: Server,
   app: Express

@@ -62,6 +62,43 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  const { pool } = await import("./db");
+
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'customer'
+      );
+      CREATE TABLE IF NOT EXISTS dashboard_posts (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        link TEXT,
+        attachments JSONB DEFAULT '[]',
+        published BOOLEAN NOT NULL DEFAULT false,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        created_by VARCHAR NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS post_assignments (
+        post_id INTEGER NOT NULL,
+        user_id VARCHAR NOT NULL,
+        PRIMARY KEY (post_id, user_id)
+      );
+      CREATE TABLE IF NOT EXISTS "session" (
+        "sid" VARCHAR NOT NULL COLLATE "default",
+        "sess" JSON NOT NULL,
+        "expire" TIMESTAMP(6) NOT NULL,
+        PRIMARY KEY ("sid")
+      );
+    `);
+    log("Database tables verified");
+  } catch (e) {
+    console.error("Table creation error:", e);
+  }
+
   const { seedDatabase } = await import("./seed");
   await registerRoutes(httpServer, app);
 

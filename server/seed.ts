@@ -19,6 +19,20 @@ export async function seedDatabase() {
     role: "customer",
   });
 
+  const pw2 = await hashPassword("Tommaso!noro!99");
+  await storage.createUser({
+    username: "tommaso@noro.co",
+    password: pw2,
+    role: "customer",
+  });
+
+  const pw3 = await hashPassword("Teun!99noro!");
+  await storage.createUser({
+    username: "teun@sharedstudios.com",
+    password: pw3,
+    role: "customer",
+  });
+
   await storage.createPost(
     {
       title: "Welcome to Touch Equity Partners",
